@@ -1,0 +1,16 @@
+
+
+class Screen {
+
+    function void drawPixel(int x, int y) {
+
+    }
+
+    function void drawLine() {
+
+    }
+
+    function void drawCircle() {
+
+    }
+}

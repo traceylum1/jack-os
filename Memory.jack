@@ -1,21 +1,72 @@
-
+/**
+ *  Memory class
+ *  RAM is broken up into different segments
+ *      - VM segments (0-255)
+ *      - Stack (265-2047)
+ *      - Heap (2048-16383)
+ *      - I/O Memory Maps (16384-24576)
+ *      - Unused area (24577-32767)
+ */
 
 class Memory {
-    
-    function int peek(int address) {
+    static Array ram, heap;
+    static int freeList;
 
+    function void init() {
+        let ram = 0;
+
+        let heap = 2048;    // heapBase
+        let freeList = 2048;
+
+        let heap[0] = 0;    // next
+        let heap[1] = 14355;    // length
+
+        return;
+    }
+    
+    /** Returns the value of the given RAM address */
+    function int peek(int address) {
+        return ram[address];
     }
 
+    /** Sets the value of the given RAM address to the given value */
     function void poke(int address, int value) {
-
+        let ram[address] = value;
     }
 
     function Array alloc(int size) {
+        // Search freeList using best-fit or first-fit heuristics to obtain a segment with segment.size >= size + 2
+        // If no such segment found, return failure (or attempt defragmentation)
+        // block = base address of the found space
+        // update freeList and the fields of block to account for the allocation
+        // return block
+        var int block;
+        var boolean isSearching;
 
+        let isSearching = true;
+
+        while (isSearching) {
+            if (heap[freeList+1] >= size + 2) {
+                let block = freeList;
+                let freeList = freeList + size + 2;
+                
+                let isSearching = false;
+            } else {
+                if (heap[freeList] = 0) {
+                    let isSearching = false;   // stop searching if no suitable block found
+                } else {
+                    let freeList = heap[freeList];  // traverse to next in linked list
+                }
+            }
+        }
+
+        heap[block+1] = size;
+
+        return block
     }
 
     function void deAlloc(Array o) {
-
+        // Append object to the end of the freeList
     }
 
 }
