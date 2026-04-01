@@ -19,7 +19,7 @@ class Memory {
         let freeList = 2048;
 
         let heap[0] = 0;    // next
-        let heap[1] = 14355;    // length
+        let heap[1] = 14334;    // length
 
         return;
     }
@@ -35,34 +35,48 @@ class Memory {
     }
 
     function Array alloc(int size) {
-        // Search freeList using best-fit or first-fit heuristics to obtain a segment with segment.size >= size + 2
-        // If no such segment found, return failure (or attempt defragmentation)
+        // Search freeList using first-fit heuristics to obtain a segment with segment.size >= size + 2
+        // If no such segment found, return failure
         // block = base address of the found space
         // update freeList and the fields of block to account for the allocation
         // return block
-        var int block;
-        var boolean isSearching;
 
-        let isSearching = true;
+        /** First-fit: walk the free list from the head; use the first block with length >= size + 2. */
 
-        while (isSearching) {
-            if (heap[freeList+1] >= size + 2) {
-                let block = freeList;
-                let freeList = freeList + size + 2;
-                
-                let isSearching = false;
-            } else {
-                if (heap[freeList] = 0) {
-                    let isSearching = false;   // stop searching if no suitable block found
+        var int prev, cur, next, blockSize, remStart, remLen;
+
+        let prev = 0;
+        let cur = freeList;
+
+        while (~(cur = 0)) {
+            let blockSize = ram[cur + 1];
+            if (~(blockSize < size + 2)) {
+                let next = ram[cur];
+                if (blockSize > (size + 3)) {
+                    let remStart = cur + size + 2;
+                    let remLen = blockSize - size - 2;
+                    let ram[remStart] = next;
+                    let ram[remStart + 1] = remLen;
+                    if (prev = 0) {
+                        let freeList = remStart;
+                    } else {
+                        let ram[prev] = remStart;
+                    }
                 } else {
-                    let freeList = heap[freeList];  // traverse to next in linked list
+                    if (prev = 0) {
+                        let freeList = next;
+                    } else {
+                        let ram[prev] = next;
+                    }
                 }
+                let ram[cur + 1] = size;
+                return cur + 2;
             }
+            let prev = cur;
+            let cur = ram[cur];
         }
-
-        heap[block+1] = size;
-
-        return block
+        do Sys.error(6);
+        return 0;
     }
 
     function void deAlloc(Array o) {

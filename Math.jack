@@ -56,7 +56,7 @@ class Math {
         let shiftedX = x;
 
         while (i < 16) {
-            if (bit(y, i)) {
+            if (Math.bit(y, i)) {
                 let sum = sum + shiftedX;
             }
             let shiftedX = shiftedX + shiftedX;
@@ -81,9 +81,9 @@ class Math {
         if (y = 0) {
             return 0;
         }
-        let ax = abs(x);
-        let ay = abs(y);
-        let q = dividePositive(ax, ay);
+        let ax = Math.abs(x);
+        let ay = Math.abs(y);
+        let q = Math.dividePositive(ax, ay);
         if ((x < 0) = (y < 0)) {
             return q;
         }
@@ -100,8 +100,8 @@ class Math {
         if (y < 0) {
             return 0;
         }
-        let q = dividePositive(x, y + y);
-        let twoQY = multiply(q, y + y);
+        let q = Math.dividePositive(x, y + y);
+        let twoQY = Math.multiply(q, y + y);
         if ((x - twoQY) < y) {
             return q + q;
         }
@@ -144,8 +144,8 @@ class Math {
         let j = 7;
         while (~(j < 0)) {
             let candidate = y + twoToThe[j];
-            let sq = multiply(candidate, candidate);
-            if ((sq <= x) & (sq > 0)) {
+            let sq = Math.multiply(candidate, candidate);
+            if ((sq < x | sq = x) & (sq > 0)) {
                 let y = candidate;
             }
             let j = j - 1;

@@ -3,14 +3,14 @@
 class Screen {
 
     function void drawPixel(int x, int y) {
-
+        return;
     }
 
-    function void drawLine() {
-
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        return;
     }
 
-    function void drawCircle() {
-
+    function void drawCircle(int x, int y, int r) {
+        return;
     }
 }
