@@ -79,8 +79,25 @@ class Memory {
         return 0;
     }
 
+    /** o is the pointer returned by alloc (block base + 2). Append block to the end of the free list. */
     function void deAlloc(Array o) {
-        // Append object to the end of the freeList
+        var int block, cur;
+
+        let block = o - 2;
+        let ram[block + 1] = ram[block + 1] + 2;
+
+        if (freeList = 0) {
+            let freeList = block;
+            let ram[block] = 0;
+        } else {
+            let cur = freeList;
+            while (~(ram[cur] = 0)) {
+                let cur = ram[cur];
+            }
+            let ram[cur] = block;
+            let ram[block] = 0;
+        }
+        return;
     }
 
 }
