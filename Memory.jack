@@ -32,6 +32,7 @@ class Memory {
     /** Sets the value of the given RAM address to the given value */
     function void poke(int address, int value) {
         let ram[address] = value;
+        return;
     }
 
     function Array alloc(int size) {
@@ -50,7 +51,7 @@ class Memory {
 
         while (~(cur = 0)) {
             let blockSize = ram[cur + 1];
-            if (~(blockSize < size + 2)) {
+            if (blockSize > (size + 1)) {
                 let next = ram[cur];
                 if (blockSize > (size + 3)) {
                     let remStart = cur + size + 2;

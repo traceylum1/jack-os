@@ -145,7 +145,7 @@ class Math {
         while (~(j < 0)) {
             let candidate = y + twoToThe[j];
             let sq = Math.multiply(candidate, candidate);
-            if ((sq < x | sq = x) & (sq > 0)) {
+            if (((sq < x) | (sq = x)) & (sq > 0)) {
                 let y = candidate;
             }
             let j = j - 1;

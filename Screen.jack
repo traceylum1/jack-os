@@ -1,16 +1,144 @@
-
+/**
+ *  Screen: Hack display 512 wide x 256 tall, memory map 16384..24575 (8192 words).
+ *  Call Screen.init() from Sys.init() before other Screen functions.
+ */
 
 class Screen {
 
+    static boolean black;
+    static Array mask;
+
+    function void init() {
+        var int i, v;
+
+        let mask = Array.new(16);
+        let i = 0;
+        let v = 1;
+        while (i < 16) {
+            let mask[i] = v;
+            let v = v + v;
+            let i = i + 1;
+        }
+        let black = true;
+        return;
+    }
+
+    function void clearScreen() {
+        var int addr;
+
+        let addr = 16384;
+        while (addr < 24576) {
+            do Memory.poke(addr, 0);
+            let addr = addr + 1;
+        }
+        return;
+    }
+
+    function void setColor(boolean b) {
+        let black = b;
+        return;
+    }
+
     function void drawPixel(int x, int y) {
+        var int addr, m, v;
+
+        let addr = 16384 + Math.multiply(y, 32) + Math.divide(x, 16);
+        let m = mask[x & 15];
+        let v = Memory.peek(addr);
+        if (black) {
+            do Memory.poke(addr, v | m);
+        }
+        else {
+            do Memory.poke(addr, v & (~m));
+        }
         return;
     }
 
     function void drawLine(int x1, int y1, int x2, int y2) {
+        var int dx, dy, adx, ady, x, y, err, xstep, ystep;
+
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        let adx = Math.abs(dx);
+        let ady = Math.abs(dy);
+        let x = x1;
+        let y = y1;
+
+        let xstep = 1;
+        let ystep = 1;
+        if (dx < 0) {
+            let xstep = -1;
+        }
+        if (dy < 0) {
+            let ystep = -1;
+        }
+
+        if (adx > ady) {
+            let err = Math.divide(adx, 2);
+            while (~(x = x2)) {
+                do Screen.drawPixel(x, y);
+                let err = err - ady;
+                if (err < 0) {
+                    let y = y + ystep;
+                    let err = err + adx;
+                }
+                let x = x + xstep;
+            }
+        }
+        else {
+            let err = Math.divide(ady, 2);
+            while (~(y = y2)) {
+                do Screen.drawPixel(x, y);
+                let err = err - adx;
+                if (err < 0) {
+                    let x = x + xstep;
+                    let err = err + ady;
+                }
+                let y = y + ystep;
+            }
+        }
+        do Screen.drawPixel(x2, y2);
+        return;
+    }
+
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int ymin, ymax, y;
+
+        let ymin = Math.min(y1, y2);
+        let ymax = Math.max(y1, y2);
+        let y = ymin;
+        while (~(y > ymax)) {
+            do Screen.drawLine(Math.min(x1, x2), y, Math.max(x1, x2), y);
+            let y = y + 1;
+        }
         return;
     }
 
     function void drawCircle(int x, int y, int r) {
+        var int px, py, d, t;
+
+        let px = 0;
+        let py = r;
+        let d = 3 - r - r;
+        while (px <= py) {
+            do Screen.drawPixel(x + px, y + py);
+            do Screen.drawPixel(x - px, y + py);
+            do Screen.drawPixel(x + px, y - py);
+            do Screen.drawPixel(x - px, y - py);
+            do Screen.drawPixel(x + py, y + px);
+            do Screen.drawPixel(x - py, y + px);
+            do Screen.drawPixel(x + py, y - px);
+            do Screen.drawPixel(x - py, y - px);
+            if (d < 0) {
+                let d = d + px + px + px + px + 6;
+            }
+            else {
+                let t = px - py;
+                let d = d + t + t + t + t + 10;
+                let py = py - 1;
+            }
+            let px = px + 1;
+        }
         return;
     }
 }
