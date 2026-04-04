@@ -59,10 +59,6 @@ class Screen {
 
         let dx = x2 - x1;
         let dy = y2 - y1;
-        let adx = Math.abs(dx);
-        let ady = Math.abs(dy);
-        let x = x1;
-        let y = y1;
 
         let xstep = 1;
         let ystep = 1;
@@ -72,6 +68,30 @@ class Screen {
         if (dy < 0) {
             let ystep = -1;
         }
+
+        if (dy = 0) {
+            let x = x1;
+            while (~(x = x2)) {
+                do Screen.drawPixel(x, y1);
+                let x = x + xstep;
+            }
+            do Screen.drawPixel(x2, y2);
+            return;
+        }
+        if (dx = 0) {
+            let y = y1;
+            while (~(y = y2)) {
+                do Screen.drawPixel(x1, y);
+                let y = y + ystep;
+            }
+            do Screen.drawPixel(x2, y2);
+            return;
+        }
+
+        let adx = Math.abs(dx);
+        let ady = Math.abs(dy);
+        let x = x1;
+        let y = y1;
 
         if (adx > ady) {
             let err = Math.divide(adx, 2);
@@ -115,29 +135,19 @@ class Screen {
     }
 
     function void drawCircle(int x, int y, int r) {
-        var int px, py, d, t;
+        var int dy, yline, r2, dy2, w2, w;
 
-        let px = 0;
-        let py = r;
-        let d = 3 - r - r;
-        while (px <= py) {
-            do Screen.drawPixel(x + px, y + py);
-            do Screen.drawPixel(x - px, y + py);
-            do Screen.drawPixel(x + px, y - py);
-            do Screen.drawPixel(x - px, y - py);
-            do Screen.drawPixel(x + py, y + px);
-            do Screen.drawPixel(x - py, y + px);
-            do Screen.drawPixel(x + py, y - px);
-            do Screen.drawPixel(x - py, y - px);
-            if (d < 0) {
-                let d = d + px + px + px + px + 6;
+        let r2 = r * r;
+        let dy = -r;
+        while (~(dy > r)) {
+            let yline = y + dy;
+            let dy2 = dy * dy;
+            let w2 = r2 - dy2;
+            if (~(w2 < 0)) {
+                let w = Math.sqrt(w2);
+                do Screen.drawLine(x - w, yline, x + w, yline);
             }
-            else {
-                let t = px - py;
-                let d = d + t + t + t + t + 10;
-                let py = py - 1;
-            }
-            let px = px + 1;
+            let dy = dy + 1;
         }
         return;
     }
